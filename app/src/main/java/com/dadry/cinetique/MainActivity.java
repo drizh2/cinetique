@@ -2,26 +2,22 @@ package com.dadry.cinetique;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.window.OnBackInvokedDispatcher;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.dadry.cinetique.adapter.CustomRecyclerViewAdapter;
 import com.dadry.cinetique.entity.Film;
-import com.dadry.cinetique.util.DatabaseConstants;
 import com.dadry.cinetique.util.DatabaseHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,12 +70,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Press one more time to exit", Toast.LENGTH_SHORT).show();
         isBackPressedOnce = true;
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                isBackPressedOnce = false;
-            }
-        }, 2000);
+        new Handler().postDelayed(() -> isBackPressedOnce = false, 2000);
     }
 
     @Override
@@ -95,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = db.readAllData();
 
         if (cursor.getCount() == 0) {
-//            Toast.makeText(this, "No Data", Toast.LENGTH_SHORT).show();
             noDataImage.setVisibility(View.VISIBLE);
             noDataText.setVisibility(View.VISIBLE);
         } else {

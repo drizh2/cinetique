@@ -7,4 +7,5 @@
     <color name="watched">#958F8F</color>
     <color name="toWatch">#EDF1C748</color>
     <color name="noData">#EDA9A9A9</color>
+    <color name="mainColor">#F6B25E</color>
 </resources>

@@ -44,40 +44,33 @@ public class UpdateActivity extends AppCompatActivity {
         }
 
         saveButton.setOnClickListener(v -> {
-            String titleText = String.valueOf(titleInput.getText());
-            String reviewText = String.valueOf(reviewInput.getText());
+            DatabaseHelper db = new DatabaseHelper(UpdateActivity.this);
+            Film film = new Film();
 
-            if(
-                    !titleText.equals("") &&
-                            (isWatched.isChecked() &&
-                                    ratingBar.getRating() != 0 &&
-                                    !reviewText.equals("")
-                            )
+            film.setId(id);
+            film.setTitle(String.valueOf(titleInput.getText()));
+            film.setWatched(isWatched.isChecked());
+
+            if (isWatched.isChecked()) {
+                film.setMark((int) ratingBar.getRating());
+                film.setReview(String.valueOf(reviewInput.getText()));
+            }
+
+            if (!film.getTitle().isEmpty() &&
+                    (film.getMark() == null || film.getMark() != 0) &&
+                    (film.getReview() == null || !film.getReview().isEmpty())
             ) {
-                Film film = new Film();
-
-                film.setId(id);
-                film.setTitle(titleText);
-                film.setWatched(isWatched.isChecked());
-
-                if (isWatched.isChecked()) {
-                    film.setMark((int) ratingBar.getRating());
-                    film.setReview(String.valueOf(reviewInput.getText()));
-                }
-
-                DatabaseHelper db = new DatabaseHelper(UpdateActivity.this);
                 db.updateFilm(film);
 
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "Enter all fields!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "All fields should be filled!", Toast.LENGTH_SHORT).show();
             }
+
         });
 
-        deleteButton.setOnClickListener(v -> {
-            confirmDialog();
-        });
+        deleteButton.setOnClickListener(v -> confirmDialog());
 
         isWatched.setOnClickListener(v -> {
             ViewGroup.LayoutParams layoutParams = saveButton.getLayoutParams();
@@ -107,7 +100,7 @@ public class UpdateActivity extends AppCompatActivity {
              this.isWatchedData = Boolean.parseBoolean(getIntent().getStringExtra("isWatched"));
 
             if (isWatchedData) {
-                Integer mark = Integer.valueOf(getIntent().getStringExtra("mark"));
+                int mark = Integer.parseInt(getIntent().getStringExtra("mark"));
                 String review = getIntent().getStringExtra("review");
 
                 this.ratingBar.setRating(mark);
@@ -126,21 +119,13 @@ public class UpdateActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Delete " + title + " ?");
         builder.setMessage("Are you sure you want to delete " + title + " ?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                DatabaseHelper db = new DatabaseHelper(UpdateActivity.this);
-                db.deleteRow(String.valueOf(id));
-                finish();
-            }
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            DatabaseHelper db = new DatabaseHelper(UpdateActivity.this);
+            db.deleteRow(String.valueOf(id));
+            finish();
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
+        builder.setNegativeButton("No", (dialog, which) -> {});
 
         builder.create().show();
     }

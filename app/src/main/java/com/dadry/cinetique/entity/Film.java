@@ -1,10 +1,5 @@
 package com.dadry.cinetique.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class Film {
     private Long id;
     private String title;

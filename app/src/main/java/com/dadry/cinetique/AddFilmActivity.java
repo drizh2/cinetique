@@ -39,38 +39,33 @@ public class AddFilmActivity extends AppCompatActivity {
         });
 
         saveButton.setOnClickListener(v -> {
+            DatabaseHelper databaseHelper = new DatabaseHelper(AddFilmActivity.this);
 
-            String titleText = String.valueOf(titleInput.getText());
-            String reviewText = String.valueOf(reviewInput.getText());
+            Film film = new Film();
 
-            if(
-                !titleText.equals("") &&
-                    (isWatched.isChecked() &&
-                    ratingBar.getRating() != 0 &&
-                    !reviewText.equals("")
-                    )
+            film.setTitle(String.valueOf(titleInput.getText()));
+
+            film.setWatched(isWatched.isChecked());
+
+            if (isWatched.isChecked()) {
+                int mark = (int) ratingBar.getRating();
+
+                film.setMark(mark);
+                film.setReview(String.valueOf(reviewInput.getText()));
+            }
+
+            if (!film.getTitle().isEmpty() &&
+                    (film.getMark() == null || film.getMark() != 0) &&
+                    (film.getReview() == null || !film.getReview().isEmpty())
             ) {
-                DatabaseHelper databaseHelper = new DatabaseHelper(AddFilmActivity.this);
-
-                Film film = new Film();
-                film.setTitle(titleText);
-
-                film.setWatched(isWatched.isChecked());
-
-                if (isWatched.isChecked()) {
-                    int mark = (int) ratingBar.getRating();
-
-                    film.setMark(mark);
-                    film.setReview(reviewText);
-                }
-
                 databaseHelper.addFilm(film);
 
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "Enter all fields!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "All fields should be filled!", Toast.LENGTH_SHORT).show();
             }
+
         });
 
     }
