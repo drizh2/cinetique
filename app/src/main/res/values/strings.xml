@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Cinetique</string>
+    <string name="add_label">Add a film</string>
+    <string name="update_label">Update a film</string>
+    <string name="save_label">Save</string>
+    <string name="delete_label">Delete</string>
+    <string name="no_data_label">No Data</string>
+</resources>
