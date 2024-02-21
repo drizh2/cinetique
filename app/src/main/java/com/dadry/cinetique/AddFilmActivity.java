@@ -40,26 +40,37 @@ public class AddFilmActivity extends AppCompatActivity {
 
         saveButton.setOnClickListener(v -> {
 
-            DatabaseHelper databaseHelper = new DatabaseHelper(AddFilmActivity.this);
+            String titleText = String.valueOf(titleInput.getText());
+            String reviewText = String.valueOf(reviewInput.getText());
 
-            Film film = new Film();
-            String title = String.valueOf(titleInput.getText());
+            if(
+                !titleText.equals("") &&
+                    (isWatched.isChecked() &&
+                    ratingBar.getRating() != 0 &&
+                    !reviewText.equals("")
+                    )
+            ) {
+                DatabaseHelper databaseHelper = new DatabaseHelper(AddFilmActivity.this);
 
-            film.setTitle(title);
-            film.setWatched(isWatched.isChecked());
+                Film film = new Film();
+                film.setTitle(titleText);
 
-            if (isWatched.isChecked()) {
-                int mark = (int) ratingBar.getRating();
-                String review = String.valueOf(reviewInput.getText());
+                film.setWatched(isWatched.isChecked());
 
-                film.setMark(mark);
-                film.setReview(review);
+                if (isWatched.isChecked()) {
+                    int mark = (int) ratingBar.getRating();
+
+                    film.setMark(mark);
+                    film.setReview(reviewText);
+                }
+
+                databaseHelper.addFilm(film);
+
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Enter all fields!", Toast.LENGTH_SHORT).show();
             }
-
-            databaseHelper.addFilm(film);
-
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
         });
 
     }

@@ -44,22 +44,35 @@ public class UpdateActivity extends AppCompatActivity {
         }
 
         saveButton.setOnClickListener(v -> {
-            Film film = new Film();
+            String titleText = String.valueOf(titleInput.getText());
+            String reviewText = String.valueOf(reviewInput.getText());
 
-            film.setId(id);
-            film.setTitle(String.valueOf(titleInput.getText()));
-            film.setWatched(isWatched.isChecked());
+            if(
+                    !titleText.equals("") &&
+                            (isWatched.isChecked() &&
+                                    ratingBar.getRating() != 0 &&
+                                    !reviewText.equals("")
+                            )
+            ) {
+                Film film = new Film();
 
-            if (isWatched.isChecked()) {
-                film.setMark((int) ratingBar.getRating());
-                film.setReview(String.valueOf(reviewInput.getText()));
+                film.setId(id);
+                film.setTitle(titleText);
+                film.setWatched(isWatched.isChecked());
+
+                if (isWatched.isChecked()) {
+                    film.setMark((int) ratingBar.getRating());
+                    film.setReview(String.valueOf(reviewInput.getText()));
+                }
+
+                DatabaseHelper db = new DatabaseHelper(UpdateActivity.this);
+                db.updateFilm(film);
+
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Enter all fields!", Toast.LENGTH_SHORT).show();
             }
-
-            DatabaseHelper db = new DatabaseHelper(UpdateActivity.this);
-            db.updateFilm(film);
-
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
         });
 
         deleteButton.setOnClickListener(v -> {
