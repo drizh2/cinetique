@@ -11,27 +11,13 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintVertical_bias="0.0"/>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addButton"
-            android:layout_width="68dp"
-            android:layout_height="68dp"
-            android:layout_gravity="bottom|right"
-            app:shapeAppearance="@style/Widget.Material3.CircularProgressIndicator.Medium"
-            android:layout_margin="16dp"
-            app:srcCompat="@drawable/ic_add"
-            app:fabCustomSize="68dp"
-            android:contentDescription="@string/app_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:tint="@android:color/black"
-            app:backgroundTint="#F6B25E"/>
+            android:layout_marginBottom="80dp"
+            app:layout_constraintBottom_toTopOf="@+id/coordinatorLayout"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintVertical_bias="1.0"/>
 
     <ImageView
             android:layout_width="111dp"
@@ -58,5 +44,43 @@
             app:layout_constraintHorizontal_bias="0.498"
             android:textSize="30sp"
             android:textColor="@color/noData"/>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/coordinatorLayout">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:menu="@menu/bottom_navigation_menu"
+                android:foregroundGravity="bottom"
+                app:itemIconTint="@color/lightGrey"
+                app:itemActiveIndicatorStyle="@style/ShapeAppearance.Material3.Corner.None"
+                android:id="@+id/bottomNavigationView"
+                android:background="@color/noData"
+                app:labelVisibilityMode="unlabeled"
+                android:layout_gravity="bottom"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="68dp"
+                android:id="@+id/addButton"
+                android:layout_height="68dp"
+                app:shapeAppearance="@style/Widget.Material3.CircularProgressIndicator.Medium"
+                android:src="@drawable/ic_add"
+                app:fabCustomSize="68dp"
+                android:tint="@color/black"
+                app:backgroundTint="@color/mainColor"
+                android:layout_marginBottom="30dp"
+                app:layout_anchor="@+id/bottomNavigationView"
+                android:layout_gravity="center"
+                app:layout_anchorGravity="top|center"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

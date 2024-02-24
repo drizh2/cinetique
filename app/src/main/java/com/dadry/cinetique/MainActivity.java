@@ -4,20 +4,31 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.dadry.cinetique.adapter.CustomRecyclerViewAdapter;
+import com.dadry.cinetique.comparator.FilmComparatorBestFirst;
+import com.dadry.cinetique.comparator.FilmComparatorWorstFirst;
 import com.dadry.cinetique.entity.Film;
 import com.dadry.cinetique.util.DatabaseHelper;
+import com.dadry.cinetique.comparator.FilmComparatorNotWatchedFirst;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton addButton;
     ImageView noDataImage;
     TextView noDataText;
+    BottomNavigationView bottomNavigationView;
 
     DatabaseHelper db;
     ArrayList<Film> films;
@@ -57,6 +69,27 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new CustomRecyclerViewAdapter(MainActivity.this, this, films);
         recyclerView.setAdapter(adapter);
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem menuItem) {
+
+                switch (menuItem.getItemId()) {
+                    case R.id.sort:
+                        showPopUpMenu();
+                        break;
+                    case R.id.deleteAll:
+                        confirmDialog();
+                        break;
+                    default:
+                        return false;
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override
@@ -116,5 +149,52 @@ public class MainActivity extends AppCompatActivity {
             }
             Toast.makeText(this, "Data Loaded!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showPopUpMenu() {
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, bottomNavigationView);
+
+        popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.notWatched:
+                    sort(new FilmComparatorNotWatchedFirst());
+                    break;
+                case R.id.worstFirst:
+                    sort(new FilmComparatorWorstFirst());
+                    break;
+                case R.id.bestFirst:
+                    sort(new FilmComparatorBestFirst());
+                    break;
+            }
+            popupMenu.dismiss();
+            return false;
+        });
+
+        popupMenu.show();
+    }
+
+    private void confirmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete all data?");
+        builder.setMessage("Are you sure you want to delete all data?");
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            DatabaseHelper db = new DatabaseHelper(MainActivity.this);
+            db.deleteAll();
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        builder.setNegativeButton("No", (dialog, which) -> {});
+
+        builder.create().show();
+    }
+
+    private void sort(Comparator<Film> comparator) {
+        films.sort(comparator);
+        adapter = new CustomRecyclerViewAdapter(MainActivity.this, this, films);
+        recyclerView.setAdapter(adapter);
     }
 }
