@@ -100,7 +100,6 @@ public class UpdateActivity extends AppCompatActivity {
         }
 
         constraintSet.applyTo(constraintLayout);
-
     }
 
     void getIntentData() {

@@ -7,6 +7,7 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import com.dadry.cinetique.entity.Film;
 import com.dadry.cinetique.util.DatabaseHelper;
 
@@ -16,6 +17,7 @@ public class AddFilmActivity extends AppCompatActivity {
     CheckBox isWatched;
     RatingBar ratingBar;
     Button saveButton;
+    ConstraintLayout constraintLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +29,15 @@ public class AddFilmActivity extends AppCompatActivity {
         isWatched = findViewById(R.id.isWatched);
         ratingBar = findViewById(R.id.ratingBar);
         saveButton = findViewById(R.id.saveButton);
+        constraintLayout = findViewById(R.id.constraintLayout);
 
         isWatched.setOnClickListener(v -> {
             ViewGroup.LayoutParams layoutParams = saveButton.getLayoutParams();
 
             if (isWatched.isChecked()) {
-                changeTopMargin(500, View.VISIBLE, layoutParams);
+                changeBottomMargin(View.VISIBLE, layoutParams, true);
             } else {
-                changeTopMargin(40, View.GONE, layoutParams);
+                changeBottomMargin(View.GONE, layoutParams, false);
             }
         });
 
@@ -70,12 +73,19 @@ public class AddFilmActivity extends AppCompatActivity {
 
     }
 
-    private void changeTopMargin(int value, int visibility, ViewGroup.LayoutParams layoutParams) {
+    private void changeBottomMargin(int visibility, ViewGroup.LayoutParams layoutParams, boolean isWatched) {
         ratingBar.setVisibility(visibility);
         reviewInput.setVisibility(visibility);
 
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) layoutParams;
-        params.setMargins(0, value, 0, 0);
-        saveButton.setLayoutParams(params);
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(constraintLayout);
+
+        if (isWatched) {
+            constraintSet.connect(R.id.saveButton, ConstraintSet.TOP, R.id.reviewInput, ConstraintSet.BOTTOM, 30);
+        } else {
+            constraintSet.connect(R.id.saveButton, ConstraintSet.TOP, R.id.isWatched, ConstraintSet.BOTTOM, 30);
+        }
+
+        constraintSet.applyTo(constraintLayout);
     }
 }
